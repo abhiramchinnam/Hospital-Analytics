@@ -1,4 +1,4 @@
-# Real-Time Patient Flow & Hospital Analytics 🏥
+# Real-Time Patient Flow & Bed Occupancy Analytics 🏥
 
 **Author:** Abhiram Chinnam
 **Tech Stack:** Azure Event Hubs, Databricks (PySpark), ADLS Gen2, Synapse, Power BI, ADF.
