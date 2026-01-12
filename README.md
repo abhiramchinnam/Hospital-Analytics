@@ -57,8 +57,10 @@ graph TD
         Gold -->|External Table| Synapse[Azure Synapse SQL]
         Synapse -->|Direct Query| PBI[Power BI Dashboard]
     end
-📂 Repository Structure
-Bash
+
+    class EH,ADF,Synapse azure;
+    class NB1,NB2,NB3 databricks;
+    class Bronze,Silver,Gold storage;
 
 Real-Time-Patient-Flow-Analytics/
 │
@@ -77,39 +79,3 @@ Real-Time-Patient-Flow-Analytics/
 │   └── synapse_ddl.sql         # SQL scripts for External Tables
 │
 └── README.md                   # Project Documentation
-
-🛠️ Technical Deep Dive
-1. Ingestion Strategy (Bronze)
-Objective: Capture raw data with zero loss.
-
-Implementation: bronze_layer.py reads from Event Hubs using the Kafka protocol.
-
-Fault Tolerance: Enabled Checkpointing. As seen in the logs, the _checkpoints folder ensures the stream resumes exactly where it left off after any failure (Exactly-Once Processing).
-
-2. Transformation & Quality (Silver)
-Objective: Handle Schema Drift.
-
-Feature: Schema Evolution.
-
-Code Logic: silver_layer.py uses .option("mergeSchema", "true"). This allows the pipeline to automatically adapt if the IoT simulator adds new fields (e.g., Sensor_ID) without breaking the job.
-
-3. Analytics Modeling (Gold)
-Objective: Track patient history accurately.
-
-Feature: SCD Type 2 (Slowly Changing Dimensions).
-
-Code Logic: golden_layer.py implements logic to track historical changes. The table includes effective_from, effective_to, and surrogate_key columns to track when a patient moves from "Emergency" to "ICU".
-
-4. Orchestration & Automation
-Tool: Azure Data Factory (ADF).
-
-Pipeline: pipeline2.
-
-Trigger: Goldtrigger (Scheduled Execution).
-
-Monitoring: The pipeline successfully triggers all three Databricks notebooks in sequence, as evidenced by the ADF Monitor logs.
-
-
-    class EH,ADF,Synapse azure;
-    class NB1,NB2,NB3 databricks;
-    class Bronze,Silver,Gold storage;
